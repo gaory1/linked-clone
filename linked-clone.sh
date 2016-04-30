@@ -26,10 +26,10 @@ virsh domblklist --details $src_name | tail -n +3 | while read type device targe
 do
     test -z "$source" && break
     test "$source" = "-" && continue
+    test "$device" = "disk" || continue
     new_disk=$(dirname $source)/${new_name}-$i.img
     qemu-img create -f qcow2 -b $source $new_disk
     chown libvirt-qemu $source
-    #sed -i "s|$src_disk|$new_disk|" $xml
     virsh detach-disk $new_name $target --config
     virsh attach-disk $new_name $new_disk $target --driver qemu --subdriver=qcow2 --config
     i=$[$i+1]
